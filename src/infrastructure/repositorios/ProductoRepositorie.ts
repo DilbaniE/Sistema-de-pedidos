@@ -44,7 +44,7 @@ export class ProductoRepositorie{
         return resul[0];
     }
 
-    async eliminarProducto(idProducto: Producto){
+    async eliminarProducto(idProducto: number){
         const connection = getPoolConnection();
         const querySql = `DELETE FROM Product WHERE id = ?`;
         const values = [idProducto];

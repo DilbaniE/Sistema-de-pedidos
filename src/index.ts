@@ -1,43 +1,67 @@
-import { RowDataPacket } from "mysql2";
-import { ProductoRepositorie } from "./infrastructure/repositorios/ProductoRepositorie"
-import { Producto } from "./models/Producto";
+import * as readline from "readline"
+import { ProductoController } from "./infrastructure/controllers/ProductoController";
 
-const productoRepositorie = new ProductoRepositorie();
+const rl = readline.createInterface({input: process.stdin, output: process.stdout});
+const leerDatos =(mensaje: string): Promise<string> =>
+new  Promise((resolve) => rl.question(mensaje, (respuesta: string) => resolve(respuesta)))
 
 const main = async () =>{
-    const producto1 = new Producto({
-        id: null,
-        nombre: "Televisor SONY",
-        descripcion: "Tv de 500 pulgadas",
-        precio: 2300000,
-        cantidad_disponible: 3
-    });
 
-   const result = await productoRepositorie.agregarProducto(producto1);
-   console.log(result); 
+    const menu = ` 
+    1. Listar productos
+    2. Agregar productos
+    3. Editar producto
+    4. Eliminar producto
+    5. Consultar producto
+    0. salir `;
+
+    let _opcion = await leerDatos(menu)
+    let opcion = Number(_opcion)
+
+    const productCtrl = new ProductoController();
+
+    while(opcion !== 0){
+        switch (opcion) {
+            case 1:
+                await productCtrl.obtener()
+                break;
+            case 2:
+                const nombre = await leerDatos("Ingrese el nombre del producto")
+                const descripcion = await leerDatos("Ingrese descripcion del producto")
+                const _precio = await leerDatos("Ingrese el precio del producto")
+                const precio = Number(_precio)
+                const cantidad = await leerDatos("Ingrese la cantidad disponible")
+                const _cantidad = Number(cantidad)
+                //Json manera corta
+                await productCtrl.gregar({
+                    nombre,
+                    descripcion,
+                    precio,//se puede realizar abreviacion 
+                    cantidad_disponible: _cantidad
+                })
+                break;
+            case 3:
+                await productCtrl.obtener
+                break; 
+            case 4:
+                const eliminar = await leerDatos("Ingrese el ID a eliminar")
+                const  _eliminar = Number(eliminar)
+                await productCtrl.eliminar(_eliminar)
+                break;
+            case 5:
+                const _id = await leerDatos("Ingresar el id a consultar");
+                const id = Number(_id);
+                await productCtrl.obtenerId(id)
+                break;       
+            default:
+                console.log("Opcion no valida");                
+                break;
+        }
+         _opcion = await leerDatos(menu);
+         opcion = Number(_opcion);
+
+    }
    
-   const product3: RowDataPacket[] = await productoRepositorie.obtenerProducto(2)
-   if (product3.length > 0){
-    //capturando el producto
-        const jsonProduct3 = product3[0]
-        //forma 1 casteo clase
-        const productoTres = jsonProduct3 as Producto;
-        // forma 2 json
-        // const productoTres = new Producto({
-        //     id: jsonProduct3.id,
-        //     nombre: jsonProduct3.nombre,
-        //     descripcion: jsonProduct3.descripcion,
-        //     precio: jsonProduct3.precio,
-        //     cantidad_disponible: jsonProduct3.cantidad_disponible,
-        // })
-        console.log(productoTres.id);
-        //actualizar producto
-        productoTres.nombre = "TV smart "
-        productoTres.descripcion = "TV inteligente para el mundo"
-        const resulActual = await productoRepositorie.actualizarProducto(productoTres)
-   }
-   //const resulUpdate = await productoRepositorie.actualizarProducto()
-   const productos =await productoRepositorie.obtenerProductos();
-   console.log(productos);
+   rl.close();     
 }
 main();
