@@ -1,5 +1,5 @@
+import { ProductoController } from "../controllers/ProductoController";
 import * as readline from "readline"
-import { ProductoController } from "./infrastructure/controllers/ProductoController";
 
 const rl = readline.createInterface({input: process.stdin, output: process.stdout});
 const leerDatos =(mensaje: string): Promise<string> =>
@@ -13,7 +13,6 @@ const main = async () =>{
     3. Editar producto
     4. Eliminar producto
     5. Consultar producto
-    6. Editar cantidad producto
     0. salir `;
 
     let _opcion = await leerDatos(menu)
@@ -42,18 +41,7 @@ const main = async () =>{
                 })
                 break;
             case 3:
-                const _idActualizar = await leerDatos("Ingrese el id del producto a edditar")
-                const nombreActualizar = await leerDatos("Ingrese el nombre a actualizar")
-                const descripAtualizar = await leerDatos("Ingrese la descripcion a actualizar")
-                const _precioActualizar = await leerDatos("Ingrese el precio a actualizar")
-                const _cantidadActualizar = await leerDatos(" Ingrese la cantidad a actualizar")
-                await productCtrl.actualizar({
-                    id: +_idActualizar,
-                    nombre: nombreActualizar,
-                    descripcion: descripAtualizar,
-                    precio: +_precioActualizar,
-                    cantidad_disponible: +_cantidadActualizar,
-                })
+                await productCtrl.obtener
                 break; 
             case 4:
                 const eliminar = await leerDatos("Ingrese el ID a eliminar")
@@ -64,21 +52,7 @@ const main = async () =>{
                 const _id = await leerDatos("Ingresar el id a consultar");
                 const id = Number(_id);
                 await productCtrl.obtenerId(id)
-                break;  
-            case 6:
-                // const _idActualizaCantidad = await leerDatos("Ingresar el id a actualizar");
-                // const _cantidadActualizaCantidad = await leerDatos("Ingrese la nueva cantidad");
-                // const idCantidad = Number(_idActualizaCantidad);
-                // const cantidadActuali = Number(_cantidadActualizaCantidad);
-                // if (isNaN(idCantidad) || isNaN(cantidadActuali)) {
-                //     console.log("Por favor ingrese valores numéricos válidos");
-                //     return;
-                // }
-                // await productCtrl.actualizarCantidad({
-                //     id: idCantidad,
-                //     cantidad_disponible: cantidadActuali,
-                // });
-            break;       
+                break;       
             default:
                 console.log("Opcion no valida");                
                 break;

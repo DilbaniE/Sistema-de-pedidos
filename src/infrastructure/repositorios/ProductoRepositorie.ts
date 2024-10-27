@@ -1,20 +1,20 @@
-import { Pool, ResultSetHeader, RowDataPacket } from "mysql2/promise";
+import { FieldPacket, Pool, ResultSetHeader, RowDataPacket } from "mysql2/promise";
 import { Producto } from "../../models/Producto";
 import { getPoolConnection } from "./DataSource";
-import { promises } from "dns";
 
 export class ProductoRepositorie{
-    
-    async agregarProducto(producto: Producto){
+    //Este metodo es con los tipos de datos explicitos
+    async agregarProducto(producto: Producto): Promise<ResultSetHeader>{
         const connection: Pool = getPoolConnection();
         //muy importante el orden de los parametros
-        const querySql = `INSERT INTO Product(nombre, descripcion, precio, cantidad_disponible) VALUES(?,?,?,?)`;
-        const values = [producto.nombre, producto.descripcion, producto.precio, producto.cantidad_disponible];
+        const querySql: string = `INSERT INTO Product(nombre, descripcion, precio, cantidad_disponible) VALUES(?,?,?,?)`;
+        const values: Array<string | number> = [producto.nombre, producto.descripcion, producto.precio, producto.cantidad_disponible];
 
-        const result = await connection.query(querySql, values);
-        return result;
+        const result: [ResultSetHeader, FieldPacket[]] = await connection.query(querySql, values);
+        return result[0];
     }
 
+    //este metodo es con los datos implicitos
     async obtenerProductos(){
         const connection = getPoolConnection();
         const querySql = `SELECT * FROM Product`;
@@ -43,6 +43,14 @@ export class ProductoRepositorie{
         const resul = await connection.query<ResultSetHeader>(querySql, values);
         return resul[0];
     }
+
+    // async actualizarCantidadProduct(id: number, cantidad: number){
+    //     const connection = getPoolConnection();
+    //     const querySql = `UPDATE Product SET cantidad_disponible = ? WHERE id=?`;
+    //     const values = [cantidad, id];
+    //     const result = await connection.query<ResultSetHeader>(querySql, values);
+    //     return result[0];
+    // }
 
     async eliminarProducto(idProducto: number){
         const connection = getPoolConnection();
