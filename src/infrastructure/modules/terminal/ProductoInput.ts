@@ -1,4 +1,4 @@
-import { ProductoController } from "../controllers/ProductoController";
+import { ProductoController } from "../../../application/ProductoController";
 import { leerDatos, rl } from "./input";
 
 

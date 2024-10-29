@@ -1,4 +1,5 @@
-import { CategoriaController } from "../controllers/CategoriaController";
+
+import { CategoriaController } from "../../../application/CategoriaController";
 import { leerDatos, rl } from "./input";
 
 

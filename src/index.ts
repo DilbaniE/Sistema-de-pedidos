@@ -1,41 +1,23 @@
-import { leerDatos, rl } from "./infrastructure/entry-points/input";
-import { mainProduct } from "./infrastructure/entry-points/ProductoInput";
-import { mainCategory } from "./infrastructure/entry-points/categoriaInput";
+import express from "express";
+import { routes } from "./infrastructure/modules/api-rest/routers/indexRouter";
+import middleware404 from "./infrastructure/modules/api-rest/middleware/middleware";
+const createServer = () => {
+    const app = express();
+    const PORT = process.env.PORT || 3000;
 
-
-const main = async () =>{
-    const menu = `
-    1. Productos
-    2. Categorías
-    0. Salir
-    `;
-    let _opcion = await leerDatos(menu);
-    let opcion = Number(_opcion);
-    while (opcion !== 0) {
-    switch (opcion) {
-        case 1:
-        await mainProduct();
-        break;
-        case 2:
-        await mainCategory();
-        break;
-        default:
-        console.log("Opcion no reconocida");
-        break;
-    }
-    _opcion = await leerDatos(menu);
-    opcion = Number(_opcion);
-    }
-
-    rl.close();
-    return;
-    
-}
-main()
-    .then(() => {
-        console.log("Fin script");
-    })
-    .finally(() => {
-        rl.close();
-        process.exit(0);
+    app.get("/api", (req, res) => {
+        console.log("Nueva solicitud del endpoint");
+        res.send({
+            message: "Bienvenido a la API"
+        });
     });
+
+    //Importarcion de rutas
+    app.use('/api/v1', routes());
+    app.use(middleware404);
+    app.listen(PORT, () =>{
+        console.log(`servidor api-rest ejecutano: http://localhost:${PORT}`);
+    });
+};
+
+createServer();

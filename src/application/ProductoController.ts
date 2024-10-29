@@ -1,5 +1,6 @@
-import { Producto } from "../../models/Producto";
-import { ProductoRepositorie } from "../repositorios/ProductoRepositorie";
+import { ProductoRepositorie } from "../infrastructure/repositorios/ProductoRepositorie";
+import { Producto } from "../models/Producto";
+
 
 export class ProductoController {
     private productoRepo: ProductoRepositorie
@@ -87,13 +88,11 @@ export class ProductoController {
 
     async obtener(){
         try {
-            const result =await this.productoRepo.obtenerProductos();
-            console.log("Productos obtenidos");
-            console.log(result);        
+            const result =await this.productoRepo.obtenerProductos();     
             return result;
-        } catch (error: any) {
-            console.log("Aocurrido un error al consultar productos", error?.mensaje);
-            return error;
+        } catch (error) {
+            //TODO: Logger del error
+            throw error;
         }
         
     }
