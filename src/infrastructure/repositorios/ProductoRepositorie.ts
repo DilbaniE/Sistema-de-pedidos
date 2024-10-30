@@ -52,11 +52,11 @@ export class ProductoRepositorie{
     //     return result[0];
     // }
 
-    async eliminarProducto(idProducto: number){
+    async eliminarProducto(idProducto: number): Promise<ResultSetHeader> {
         const connection = getPoolConnection();
         const querySql = `DELETE FROM Product WHERE id = ?`;
         const values = [idProducto];
-        const result = await connection.query(querySql, values);
-        return result;
-    }
+        const result: [ResultSetHeader, FieldPacket[]] = await connection.query(querySql, values);
+        return result[0];
+      }
 }

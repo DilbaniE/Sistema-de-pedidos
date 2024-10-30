@@ -1,3 +1,5 @@
+
+import {QueryResult, ResultSetHeader } from "mysql2";
 import { ProductoRepositorie } from "../infrastructure/repositorios/ProductoRepositorie";
 import { Producto } from "../models/Producto";
 
@@ -16,25 +18,19 @@ export class ProductoController {
         cantidad_disponible: number;
     }) {
         try {
-            const producto = new Producto({
-                //payload informacion que se ingresa por la terminal
-                nombre: payload.nombre,
-                descripcion: payload.descripcion,
-                precio: payload.precio,
-                cantidad_disponible: payload.cantidad_disponible
-            });
-        
+            const producto = new Producto(payload)
+            if (producto.nombre === undefined) {
+                return {ok: false, message: "El nombre del producto es obligatorio"}
+            }
            const result = await this.productoRepo.agregarProducto(producto);
            if (result.affectedRows == 1) {
-                console.log("producto agregado")
+                return{ok: true, id: result.insertId}
            }else{
-                console.log("no se agrego producto");
-           }
-           console.log("Producto agregado"); 
-           return result;            
-        } catch (error) {
+                return{ok: false, message: "no se agrego"}
+            }           
+        } catch (error: any) {
             console.log("ha ocurrido un error al guardar");
-            return error;
+            throw error;
         }
        
     }
@@ -54,16 +50,16 @@ export class ProductoController {
                 precio: payload.precio,
                 cantidad_disponible: payload.cantidad_disponible
             });
-            const result = await this.productoRepo.actualizarProducto(producto);
-            if (result.affectedRows ===1) {
-                console.log("Producto actualizado");
+            const resultado = await this.productoRepo.actualizarProducto(producto);
+            if (resultado.affectedRows ===1) {
+                return {ok: true, id: resultado.insertId, message: "producto actualizado"}
             }else{
-                console.log("No se pudo actualizar");
+                return {ok: false, message: "no se puedo actualizar"}
             }
-            return result;
+             
         } catch (error) {
             console.log("ha ocurrido un error al actualizar");
-            return error;
+            throw error;
         }
     }
 
@@ -101,28 +97,26 @@ export class ProductoController {
         try {
             const result =await this.productoRepo.obtenerProducto(id);
             if (result.length == 1) {
-                console.log("Producto obtenido");
-                console.log(result);  
+                return result[0] 
             }else{
-                console.log("no se encontro producto");
+                return null
             }   
-            return result;
         } catch (error) {
             console.log("A ocurrido un error al consular producto");
-            return error;
+            throw error;
         }
        
     }
 
     async eliminar(id: number){
-        try {
-            const result = await this.productoRepo.eliminarProducto(id)
-            console.log("Producto eliminado");
-            return result;
-        } catch (error) {
-            console.log("Error al eliminar producto");
-            return error 
+        const resultado: ResultSetHeader = await this.productoRepo.eliminarProducto(id);
+        if (resultado.affectedRows == 1) {
+            console.log(`Producto eliminado`);
+            return {ok: true, message: "producto eliminado"};
+        } else {
+            return {ok:false, message: "PRODUCTO NO ELIMINADO"};
         }
-        
     }
+        
+        
 }

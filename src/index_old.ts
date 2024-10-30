@@ -1,6 +1,7 @@
 import { mainCategory } from "./infrastructure/modules/terminal/categoriaInput";
-import { leerDatos, rl } from "./infrastructure/terminal/input";
-import { mainProduct } from "./infrastructure/terminal/ProductoInput";
+import { leerDatos, rl } from "./infrastructure/modules/terminal/input";
+import { mainProduct } from "./infrastructure/modules/terminal/ProductoInput";
+
 
 
 
