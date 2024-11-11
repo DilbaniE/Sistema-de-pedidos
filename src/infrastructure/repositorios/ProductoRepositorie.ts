@@ -15,12 +15,12 @@ export class ProductoRepositorie{
     }
 
     //este metodo es con los datos implicitos
-    async obtenerProductos(){
+    async obtenerProductos(): Promise<RowDataPacket[]> {
         const connection = getPoolConnection();
         const querySql = `SELECT * FROM Product`;
-        const result = await connection.query(querySql);
-        return result;
-    }
+        const result = await connection.query<RowDataPacket[]>(querySql);
+        return result[0];
+      }
 
     async obtenerProducto(idProducto: number): Promise<RowDataPacket[]>{
         const connection = getPoolConnection();
@@ -44,13 +44,13 @@ export class ProductoRepositorie{
         return resul[0];
     }
 
-    // async actualizarCantidadProduct(id: number, cantidad: number){
-    //     const connection = getPoolConnection();
-    //     const querySql = `UPDATE Product SET cantidad_disponible = ? WHERE id=?`;
-    //     const values = [cantidad, id];
-    //     const result = await connection.query<ResultSetHeader>(querySql, values);
-    //     return result[0];
-    // }
+    async modificarCantidadProducto(id: number, cantidad: number) {
+        const connection = getPoolConnection();
+        const querySql = `UPDATE Product SET cantidad_disponible = ? WHERE id = ?`;
+        const values = [cantidad, id];
+        const result = await connection.query<ResultSetHeader>(querySql, values);
+        return result[0];
+      }
 
     async eliminarProducto(idProducto: number): Promise<ResultSetHeader> {
         const connection = getPoolConnection();

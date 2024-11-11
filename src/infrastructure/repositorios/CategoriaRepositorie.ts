@@ -11,12 +11,12 @@ export class CatetegoriaRepository{
         return result[0];
     }
 
-    async obtener() {
+    async obtener() : Promise<RowDataPacket[]>{
         const connection = getPoolConnection();
         const querySql = `SELECT * FROM category`;
-        const result = await connection.query(querySql);
+        const result = await connection.query<RowDataPacket[]>(querySql);
         return result[0];
-    }
+      }
 
     async obtenerUno(id: string): Promise<RowDataPacket[]> {
         const connection = getPoolConnection();

@@ -1,0 +1,7 @@
+{
+  "HOST": "localhost",
+  "DB_PORT": 3306,
+  "USER": "root",
+  "PASSWORD": "admin123",
+  "DATABASE": "virtual_store"
+}

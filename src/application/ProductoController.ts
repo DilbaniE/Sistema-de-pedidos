@@ -2,6 +2,8 @@
 import {QueryResult, ResultSetHeader } from "mysql2";
 import { ProductoRepositorie } from "../infrastructure/repositorios/ProductoRepositorie";
 import { Producto } from "../models/Producto";
+import { ActualizarDto, ProductDto } from "../dto/productDto";
+import { error } from "console";
 
 
 export class ProductoController {
@@ -18,19 +20,27 @@ export class ProductoController {
         cantidad_disponible: number;
     }) {
         try {
+            // validar el producto
+            const dto = new ProductDto(payload);
+            const errores = await dto.validadorDto();
+            if (errores.length > 0) {
+                return {ok:false, message: "El request tiene errores"}
+            }
+             // crear el producto
             const producto = new Producto(payload)
             if (producto.nombre === undefined) {
-                return {ok: false, message: "El nombre del producto es obligatorio"}
+                return {ok: false, message: "El nombre del producto es obligatorio", error: errores}
             }
+            //mguardar el producto
            const result = await this.productoRepo.agregarProducto(producto);
+           //Manejando respuesta controllador
            if (result.affectedRows == 1) {
                 return{ok: true, id: result.insertId}
            }else{
                 return{ok: false, message: "no se agrego"}
             }           
         } catch (error: any) {
-            console.log("ha ocurrido un error al guardar");
-            throw error;
+            throw {ok: false, message: "Ha ocurrido un error", error};
         }
        
     }
@@ -43,13 +53,12 @@ export class ProductoController {
         cantidad_disponible: number;
     }){
         try {
-            const producto = new Producto({
-                id: payload.id,
-                nombre:payload.nombre,
-                descripcion: payload.descripcion,
-                precio: payload.precio,
-                cantidad_disponible: payload.cantidad_disponible
-            });
+            const dto = new ActualizarDto(payload);
+            const errores = await dto.validadorDto();
+            if (errores.length > 0) {
+                return {ok:false, message: "El request tiene errores"}
+            }
+            const producto = new Producto(payload);
             const resultado = await this.productoRepo.actualizarProducto(producto);
             if (resultado.affectedRows ===1) {
                 return {ok: true, id: resultado.insertId, message: "producto actualizado"}
@@ -63,35 +72,41 @@ export class ProductoController {
         }
     }
 
-    // async actualizarCantidad(payload: { id: number; cantidad_disponible: number }) {
-    //     try {
-    //       const resultado = await this.productoRepo.actualizarCantidadProduct(
-    //         payload.id,
-    //         payload.cantidad_disponible
-    //       );
-    //       if (resultado.affectedRows === 1) {
-    //         console.log("Cantidad actualizada");
-    //       } else {
-    //         console.log("No se pudo actualizar la cantidad");
-    //       }
-    //       return resultado;
-    //     } catch (error) {
-    //       console.log("Ha ocurrido un error actualizando la cantidad.");
-    //       return error;
-    //     }
-    // }
+    async actualizarCantidad(payload: { id: number; cantidad_disponible: number }) {
+        try {
+          if (!payload.id || !payload.cantidad_disponible) {
+            return { ok: false, message: "Id y cantidad disponible son obligatorios." };
+          }
+          if (Number.isNaN(+payload.id) || Number.isNaN(+payload.cantidad_disponible)) {
+            return { ok: false, message: "Id y cantidad deben ser números." };
+          }
+          const resultado = await this.productoRepo.modificarCantidadProducto(
+            payload.id,
+            payload.cantidad_disponible
+          );
+          if (resultado.affectedRows === 1) {
+            return { ok: true, message: "Cantidad actualizada" };
+          } else {
+            return { ok: false, message: "No se pudo actualizar la cantidad" };
+          }
+        } catch (error) {
+          throw { ok: false, message: "Ha ocurrido un error inesperado", error };
+        }
+      }
     
 
-    async obtener(){
+      async obtener() {
         try {
-            const result =await this.productoRepo.obtenerProductos();     
-            return result;
+          const resultado = await this.productoRepo.obtenerProductos();
+          if (resultado.length == 0) { 
+            return { ok: true, message: "No hay productos" };
+          } else {
+            return { ok: true, info: resultado };
+          }
         } catch (error) {
-            //TODO: Logger del error
-            throw error;
+          throw { ok: false, message: "Ha ocurrido un error inesperado", error };
         }
-        
-    }
+      }
 
     async obtenerId(id: number){
         try {

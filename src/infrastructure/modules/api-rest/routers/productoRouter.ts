@@ -26,15 +26,28 @@ export const productosRoutes = () => {
         });
     });
 
-    router.get("/productos", (req, res) => {
-        productoCtrl.obtener().then((result) =>{
-            res.send(result);
-        }).catch((error) =>{
-            res.send({
-                message: "Ha ocurrido un error al consultar producto"
-            })
-        })
-    });
+    router.put("/productos/cantidad", (req, res) => {
+        // Actualizar la cantidad un producto
+        const body = req.body;
+        productoCtrl
+          .actualizarCantidad(body)
+          .then((result) => {
+            const status = result.ok === true ? 200 : 400;
+            res.status(status).send(result);
+          })
+          .catch((error) => {
+            res.status(500).send(error);
+          });
+      });
+
+      router.get("/productos", async (_, res) => {
+        try {
+          const result = await productoCtrl.obtener();
+          res.send(result);
+        } catch (error) {
+          res.status(500).send(error);
+        }
+      });
 
     router.get("/productos/:id", async(req, res) => {
         try {

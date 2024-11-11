@@ -22,5 +22,6 @@ const createServer = () => {
         console.log(`servidor api-rest ejecutano: http://localhost:${PORT}`);
     });
 };
+console.log(process.env);
 
 createServer();
