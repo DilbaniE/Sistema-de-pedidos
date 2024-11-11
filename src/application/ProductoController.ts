@@ -45,31 +45,32 @@ export class ProductoController {
        
     }
 
-    async actualizar(payload:{
-        id: number;
-        nombre: string;
-        descripcion: string;
-        precio: number;
-        cantidad_disponible: number;
-    }){
-        try {
-            const dto = new ActualizarDto(payload);
-            const errores = await dto.validadorDto();
-            if (errores.length > 0) {
-                return {ok:false, message: "El request tiene errores"}
-            }
-            const producto = new Producto(payload);
-            const resultado = await this.productoRepo.actualizarProducto(producto);
-            if (resultado.affectedRows ===1) {
-                return {ok: true, id: resultado.insertId, message: "producto actualizado"}
-            }else{
-                return {ok: false, message: "no se puedo actualizar"}
-            }
-             
-        } catch (error) {
-            console.log("ha ocurrido un error al actualizar");
-            throw error;
+    async actualizar(body: {
+      id: number;
+      nombre: string;
+      descripcion: string;
+      precio: number;
+      cantidad_disponible: number;
+    }) {
+      try {
+        // Validación del body con un DTO
+        const dto = new ActualizarDto(body);
+        const errores = await dto.validadorDto();
+        if (errores.length > 0) {
+          console.log("Errores de validación:", errores);
+          return { ok: false, message: "El request tiene errores", error: errores };
         }
+  
+        const producto = new Producto(body);
+        const resultado = await this.productoRepo.actualizarProducto(producto);
+        if (resultado.affectedRows === 1) {
+          return { ok: true, message: "Producto actualizado" };
+        } else {
+          return { ok: false, message: "No se pudo actualizar el producto" };
+        }
+      } catch (error) {
+        throw { ok: false, message: "Ha ocurrido un error inesperado", error };
+      }
     }
 
     async actualizarCantidad(payload: { id: number; cantidad_disponible: number }) {

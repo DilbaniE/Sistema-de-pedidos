@@ -20,8 +20,10 @@ export const  categoriaRoutes = () => {
           });
       });
     
-      router.put("/categorias", (req, res) => {
-        const payload = req.body;
+      router.put("/categorias/:id", (req, res) => {
+        const { id } = req.params;
+        const payload = { id, ...req.body };
+    
         categoriaCtrl
           .actualizar(payload)
           .then((result) => {
@@ -32,6 +34,7 @@ export const  categoriaRoutes = () => {
             res.status(500).send(error);
           });
       });
+    
     
       // ASYNC - AWAIT
       router.get("/categorias", async (_, res) => {

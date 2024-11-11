@@ -16,15 +16,21 @@ export const productosRoutes = () => {
     });
 
     // Agregamos una ruta GET para probar
-    router.put("/productos", (req, res) => {
-        const payload = req.body;
-        productoCtrl.actualizar(payload).then((result) =>{
+    router.put("/productos/:id", (req, res) => {
+        const { id } = req.params;
+        const body = { id: Number(id), ...req.body };
+    
+        productoCtrl
+          .actualizar(body)
+          .then((result) => {
             const status = result.ok === true ? 200 : 400;
             res.status(status).send(result);
-        }).catch((error) =>{
+          })
+          .catch((error) => {
             res.status(500).send(error);
-        });
-    });
+          });
+      });
+    
 
     router.put("/productos/cantidad", (req, res) => {
         // Actualizar la cantidad un producto

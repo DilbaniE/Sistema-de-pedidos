@@ -48,6 +48,7 @@ export class CategoriaController{
         throw { ok: false, message: "Ha ocurrido un error inesperado", error };
       }
     }
+    
   
     async obtener() {
       try {
