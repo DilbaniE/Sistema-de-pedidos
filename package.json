@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.ts",
   "scripts": {
-    "dev": "nodemon -e ts,json --exec ts-node ./src/index.ts",
+    "dev": " cross-env NODE_ENV=development && nodemon -e ts,json --exec ts-node ./src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -14,12 +14,15 @@
     "class-validator": "^0.14.1",
     "config": "^3.3.12",
     "express": "^4.21.1",
-    "mysql2": "^3.11.3"
+    "mysql2": "^3.11.4",
+    "reflect-metadata": "^0.2.2",
+    "typeorm": "^0.3.20"
   },
   "devDependencies": {
     "@types/config": "^3.3.5",
     "@types/express": "^5.0.0",
     "@types/node": "^22.7.5",
+    "cross-env": "^7.0.3",
     "typescript": "^5.6.3"
   }
 }

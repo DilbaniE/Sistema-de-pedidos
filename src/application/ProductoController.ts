@@ -3,7 +3,7 @@ import {QueryResult, ResultSetHeader } from "mysql2";
 import { ProductoRepositorie } from "../infrastructure/repositorios/ProductoRepositorie";
 import { Producto } from "../models/Producto";
 import { ActualizarDto, ProductDto } from "../dto/productDto";
-import { error } from "console";
+
 
 
 export class ProductoController {
